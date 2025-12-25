@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Tree Animation</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #app {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>🎄 Exquisite Christmas Tree 🎄</h2>
+        
+        <py-script>
+import turtle
+import random
+
+# 设置画布
+turtle.setup(800, 600)
+turtle.bgcolor("#1a1a2e")
+turtle.title("Exquisite Christmas Tree")
+
+# 隐藏光标并加速绘制
+turtle.hideturtle()
+turtle.speed(0)
+
+def draw_tree():
+    """绘制圣诞树主体"""
+    turtle.penup()
+    turtle.goto(0, -200)
+    turtle.pendown()
+    
+    # 树干
+    turtle.color("#654321")
+    turtle.begin_fill()
+    for _ in range(2):
+        turtle.forward(40)
+        turtle.left(90)
+        turtle.forward(80)
+        turtle.left(90)
+    turtle.end_fill()
+    
+    # 树叶（三层三角形）
+    colors = ["#0f4d0f", "#1a6b1a", "#2d8a2d"]
+    sizes = [200, 150, 100]
+    y_positions = [-120, -40, 40]
+    
+    for color, size, y in zip(colors, sizes, y_positions):
+        turtle.penup()
+        turtle.goto(-size/2, y)
+        turtle.pendown()
+        turtle.color(color)
+        turtle.begin_fill()
+        for _ in range(3):
+            turtle.forward(size)
+            turtle.left(120)
+        turtle.end_fill()
+
+def draw_star():
+    """绘制树顶星星"""
+    turtle.penup()
+    turtle.goto(0, 120)
+    turtle.pendown()
+    turtle.color("#ffd700")
+    turtle.begin_fill()
+    for _ in range(5):
+        turtle.forward(30)
+        turtle.right(144)
+    turtle.end_fill()
+
+def draw_decorations():
+    """绘制装饰品"""
+    decoration_colors = ["#ff0000", "#ffff00", "#00ffff", "#ff00ff", "#ffffff"]
+    positions = [
+        (-60, -100), (60, -100), (-40, -60), (40, -60),
+        (-80, -20), (80, -20), (-30, 0), (30, 0),
+        (-50, 60), (50, 60), (0, 80)
+    ]
+    
+    for x, y in positions:
+        turtle.penup()
+        turtle.goto(x, y)
+        turtle.pendown()
+        turtle.color(random.choice(decoration_colors))
+        turtle.dot(10)
+
+def draw_snow():
+    """绘制飘雪效果"""
+    for _ in range(30):
+        x = random.randint(-400, 400)
+        y = random.randint(-300, 300)
+        turtle.penup()
+        turtle.goto(x, y)
+        turtle.pendown()
+        turtle.color("white")
+        turtle.dot(random.randint(2, 5))
+
+# 绘制所有元素
+draw_tree()
+draw_star()
+draw_decorations()
+draw_snow()
+
+# 显示祝福语
+turtle.penup()
+turtle.goto(0, -250)
+turtle.color("white")
+turtle.write("Merry Christmas! 🎅", align="center", font=("Arial", 20, "bold"))
+
+turtle.done()
+        </py-script>
+    </div>
+</body>
+</html>
