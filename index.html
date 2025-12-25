@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Christmas Tree Animation</title>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
     <style>
         body {
             margin: 0;
@@ -28,110 +26,105 @@
             color: #2c3e50;
             margin-top: 0;
         }
+        canvas {
+            background: #1a1a2e;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <h2>🎄 Exquisite Christmas Tree 🎄</h2>
-        
-        <py-script>
-import turtle
-import random
-
-# 设置画布
-turtle.setup(800, 600)
-turtle.bgcolor("#1a1a2e")
-turtle.title("Exquisite Christmas Tree")
-
-# 隐藏光标并加速绘制
-turtle.hideturtle()
-turtle.speed(0)
-
-def draw_tree():
-    """绘制圣诞树主体"""
-    turtle.penup()
-    turtle.goto(0, -200)
-    turtle.pendown()
-    
-    # 树干
-    turtle.color("#654321")
-    turtle.begin_fill()
-    for _ in range(2):
-        turtle.forward(40)
-        turtle.left(90)
-        turtle.forward(80)
-        turtle.left(90)
-    turtle.end_fill()
-    
-    # 树叶（三层三角形）
-    colors = ["#0f4d0f", "#1a6b1a", "#2d8a2d"]
-    sizes = [200, 150, 100]
-    y_positions = [-120, -40, 40]
-    
-    for color, size, y in zip(colors, sizes, y_positions):
-        turtle.penup()
-        turtle.goto(-size/2, y)
-        turtle.pendown()
-        turtle.color(color)
-        turtle.begin_fill()
-        for _ in range(3):
-            turtle.forward(size)
-            turtle.left(120)
-        turtle.end_fill()
-
-def draw_star():
-    """绘制树顶星星"""
-    turtle.penup()
-    turtle.goto(0, 120)
-    turtle.pendown()
-    turtle.color("#ffd700")
-    turtle.begin_fill()
-    for _ in range(5):
-        turtle.forward(30)
-        turtle.right(144)
-    turtle.end_fill()
-
-def draw_decorations():
-    """绘制装饰品"""
-    decoration_colors = ["#ff0000", "#ffff00", "#00ffff", "#ff00ff", "#ffffff"]
-    positions = [
-        (-60, -100), (60, -100), (-40, -60), (40, -60),
-        (-80, -20), (80, -20), (-30, 0), (30, 0),
-        (-50, 60), (50, 60), (0, 80)
-    ]
-    
-    for x, y in positions:
-        turtle.penup()
-        turtle.goto(x, y)
-        turtle.pendown()
-        turtle.color(random.choice(decoration_colors))
-        turtle.dot(10)
-
-def draw_snow():
-    """绘制飘雪效果"""
-    for _ in range(30):
-        x = random.randint(-400, 400)
-        y = random.randint(-300, 300)
-        turtle.penup()
-        turtle.goto(x, y)
-        turtle.pendown()
-        turtle.color("white")
-        turtle.dot(random.randint(2, 5))
-
-# 绘制所有元素
-draw_tree()
-draw_star()
-draw_decorations()
-draw_snow()
-
-# 显示祝福语
-turtle.penup()
-turtle.goto(0, -250)
-turtle.color("white")
-turtle.write("Merry Christmas! 🎅", align="center", font=("Arial", 20, "bold"))
-
-turtle.done()
-        </py-script>
+        <canvas id="treeCanvas" width="800" height="600"></canvas>
     </div>
+
+    <script>
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawTree() {
+            // 树干
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(380, 420, 40, 80);
+            
+            // 树叶（三层三角形）
+            const colors = ['#0f4d0f', '#1a6b1a', '#2d8a2d'];
+            const sizes = [200, 150, 100];
+            const yPositions = [380, 300, 220];
+            
+            colors.forEach((color, i) => {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(400 - sizes[i]/2, yPositions[i]);
+                ctx.lineTo(400 + sizes[i]/2, yPositions[i]);
+                ctx.lineTo(400, yPositions[i] - sizes[i] * 0.866);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
+
+        function drawStar() {
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            const cx = 400, cy = 140;
+            const spikes = 5;
+            const outerRadius = 30;
+            const innerRadius = 15;
+            
+            for (let i = 0; i < spikes * 2; i++) {
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const angle = (i * Math.PI) / spikes - Math.PI / 2;
+                const x = cx + Math.cos(angle) * radius;
+                const y = cy + Math.sin(angle) * radius;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawDecorations() {
+            const colors = ['#ff0000', '#ffff00', '#00ffff', '#ff00ff', '#ffffff'];
+            const positions = [
+                [340, 400], [460, 400], [360, 360], [440, 360],
+                [320, 320], [480, 320], [370, 300], [430, 300],
+                [350, 260], [450, 260], [400, 240]
+            ];
+            
+            positions.forEach(([x, y]) => {
+                ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawSnow() {
+            ctx.fillStyle = 'white';
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * 800;
+                const y = Math.random() * 600;
+                const size = Math.random() * 3 + 1;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawGreeting() {
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Merry Christmas! 🎅', 400, 550);
+        }
+
+        // 绘制所有元素
+        drawTree();
+        drawStar();
+        drawDecorations();
+        drawSnow();
+        drawGreeting();
+    </script>
 </body>
 </html>
